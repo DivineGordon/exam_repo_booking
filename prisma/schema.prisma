@@ -1,0 +1,90 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  BUSINESS
+  CONSUMER
+}
+
+enum BookingStatus {
+  CONFIRMED
+  CANCELLED
+}
+
+model User {
+  id          String   @id @default(uuid())
+  email       String   @unique
+  password    String
+  role        UserRole
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  // Relations
+  businessServices Service[] @relation("BusinessServices")
+  businessAvailability Availability[]
+  businessBookings Booking[] @relation("BusinessBookings")
+  consumerBookings Booking[] @relation("ConsumerBookings")
+}
+
+model Service {
+  id          String   @id @default(uuid())
+  name        String
+  duration    Int      // Duration in minutes
+  price       Float
+  businessId  String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  // Relations
+  business    User     @relation("BusinessServices", fields: [businessId], references: [id], onDelete: Cascade)
+  bookings    Booking[]
+  
+  @@index([businessId])
+}
+
+model Availability {
+  id          String   @id @default(uuid())
+  businessId  String
+  dayOfWeek   Int      // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
+  startTime   String   // Format: "HH:mm" (e.g., "09:00")
+  endTime     String   // Format: "HH:mm" (e.g., "17:00")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  // Relations
+  business    User     @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  
+  @@unique([businessId, dayOfWeek])
+  @@index([businessId])
+}
+
+model Booking {
+  id          String        @id @default(uuid())
+  serviceId   String
+  consumerId  String
+  businessId  String
+  slotStart   DateTime
+  slotEnd     DateTime
+  status      BookingStatus @default(CONFIRMED)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  
+  // Relations
+  service     Service       @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  consumer    User          @relation("ConsumerBookings", fields: [consumerId], references: [id], onDelete: Cascade)
+  business    User          @relation("BusinessBookings", fields: [businessId], references: [id], onDelete: Cascade)
+  
+  @@index([serviceId])
+  @@index([consumerId])
+  @@index([businessId])
+  @@index([slotStart, slotEnd])
+}
