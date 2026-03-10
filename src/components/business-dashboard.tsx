@@ -7,13 +7,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { useToast } from '@/hooks/use-toast'
-import { Plus, Calendar, Clock, Settings } from 'lucide-react'
+import { Plus, Calendar, Clock } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { format } from 'date-fns'
 import { AvailabilityManager } from './availability-manager'
-// import { AvailabilityManager } from './availability-manager'
 
 const serviceSchema = z.object({
   name: z.string().min(1, 'Service name is required'),
@@ -27,7 +26,6 @@ export function BusinessDashboard() {
   const { toast } = useToast()
   const queryClient = useQueryClient()
   const [showServiceForm, setShowServiceForm] = useState(false)
-  const [showAvailabilityForm, setShowAvailabilityForm] = useState(false)
 
   const {
     register,
@@ -245,6 +243,16 @@ export function BusinessDashboard() {
           </CardContent>
         </Card>
       </div>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Business Hours</CardTitle>
+          <CardDescription>Set your availability for each day of the week</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <AvailabilityManager />
+        </CardContent>
+      </Card>
     </div>
   )
 }
