@@ -31,6 +31,7 @@ model User {
   // Relations
   businessServices Service[] @relation("BusinessServices")
   businessAvailability Availability[]
+  businessBlockedTimes BlockedTime[]
   businessBookings Booking[] @relation("BusinessBookings")
   consumerBookings Booking[] @relation("ConsumerBookings")
 }
@@ -65,6 +66,21 @@ model Availability {
   
   @@unique([businessId, dayOfWeek])
   @@index([businessId])
+}
+
+model BlockedTime {
+  id          String   @id @default(uuid())
+  businessId  String
+  dayOfWeek   Int      // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
+  startTime   String   // Format: "HH:mm" (e.g., "12:00")
+  endTime     String   // Format: "HH:mm" (e.g., "13:00")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  business    User     @relation(fields: [businessId], references: [id], onDelete: Cascade)
+
+  @@index([businessId, dayOfWeek])
 }
 
 model Booking {

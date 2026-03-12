@@ -1,5 +1,5 @@
 import { prisma } from '@/lib/prisma'
-import { addMinutes, format, parse, isWithinInterval, startOfDay } from 'date-fns'
+import { addMinutes, parse, startOfDay } from 'date-fns'
 
 export interface TimeSlot {
   start: Date
@@ -44,6 +44,14 @@ export async function getAvailableSlots(
     return [] // No availability for this day
   }
 
+  // Get any blocked time ranges for this business on this day
+  const blockedTimes = await prisma.blockedTime.findMany({
+    where: {
+      businessId,
+      dayOfWeek,
+    },
+  })
+
   // Parse start and end times
   const dayStart = startOfDay(date)
   const startTime = parse(availability.startTime, 'HH:mm', dayStart)
@@ -82,7 +90,7 @@ export async function getAvailableSlots(
     }
 
     // Check if this slot overlaps with any existing booking
-    const hasOverlap = existingBookings.some((booking) => {
+    const hasBookingOverlap = existingBookings.some((booking) => {
       // Check if slots overlap
       // Two slots overlap if: slotStart < booking.slotEnd && slotEnd > booking.slotStart
       return (
@@ -91,7 +99,14 @@ export async function getAvailableSlots(
       )
     })
 
-    if (!hasOverlap) {
+    // Check if this slot falls within any blocked time range
+    const hasBlockedOverlap = blockedTimes.some((block) => {
+      const blockStart = parse(block.startTime, 'HH:mm', dayStart)
+      const blockEnd = parse(block.endTime, 'HH:mm', dayStart)
+      return currentSlotStart < blockEnd && currentSlotEnd > blockStart
+    })
+
+    if (!hasBookingOverlap && !hasBlockedOverlap) {
       slots.push({
         start: new Date(currentSlotStart),
         end: new Date(currentSlotEnd),
