@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Link from 'next/link'
 import { useQuery } from '@tanstack/react-query'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -41,12 +42,21 @@ export function ServiceExplorer() {
       {data?.services?.length > 0 ? (
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {data.services.map((service: any) => (
-            <Card key={service.id} className="hover:shadow-lg transition-shadow">
+            <Card key={service.id} className="hover:shadow-lg transition-shadow flex flex-col">
               <CardHeader>
                 <CardTitle>{service.name}</CardTitle>
-                <CardDescription>by {service.business.email}</CardDescription>
+                <CardDescription>
+                  by{' '}
+                  <Link
+                    href={`/business/${service.business.id}`}
+                    className="underline underline-offset-2 hover:text-primary"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    {service.business.email}
+                  </Link>
+                </CardDescription>
               </CardHeader>
-              <CardContent>
+              <CardContent className="flex-1 flex flex-col">
                 <div className="space-y-2 mb-4">
                   <div className="flex items-center gap-2 text-sm text-gray-600">
                     <Clock className="h-4 w-4" />
@@ -58,7 +68,7 @@ export function ServiceExplorer() {
                   </div>
                 </div>
                 <Button
-                  className="w-full"
+                  className="w-full mt-auto"
                   onClick={() => setSelectedService(service)}
                 >
                   Book Now
