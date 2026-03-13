@@ -12,7 +12,7 @@ export default async function ConsumerDashboardPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Navbar userRole={session.role} />
+      <Navbar userRole={session.role} userEmail={session.email} />
       <div className="container mx-auto px-4 py-8">
         <ServiceExplorer />
       </div>

@@ -1,7 +1,9 @@
+import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { prisma } from '@/lib/prisma'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Navbar } from '@/components/navbar'
+import { Button } from '@/components/ui/button'
 
 interface BusinessPageProps {
   params: {
@@ -52,6 +54,14 @@ export default async function BusinessPage({ params }: BusinessPageProps) {
 
         {/* Content */}
         <div className="container mx-auto px-4 py-8 space-y-8">
+          <div>
+            <Link href="/dashboard/consumer">
+              <Button variant="outline" size="sm">
+                Back
+              </Button>
+            </Link>
+          </div>
+
           <section>
             <h2 className="text-xl font-semibold mb-2">About</h2>
             <p className="text-gray-700">

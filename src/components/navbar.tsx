@@ -6,7 +6,12 @@ import { Button } from '@/components/ui/button'
 import { useToast } from '@/hooks/use-toast'
 import { LogOut } from 'lucide-react'
 
-export function Navbar({ userRole }: { userRole?: 'BUSINESS' | 'CONSUMER' }) {
+interface NavbarProps {
+  userRole?: 'BUSINESS' | 'CONSUMER'
+  userEmail?: string
+}
+
+export function Navbar({ userRole, userEmail }: NavbarProps) {
   const router = useRouter()
   const { toast } = useToast()
 
@@ -54,6 +59,14 @@ export function Navbar({ userRole }: { userRole?: 'BUSINESS' | 'CONSUMER' }) {
                 <Button variant="ghost">My Bookings</Button>
               </Link>
             </>
+          )}
+          {userEmail && (
+            <div className="flex items-center gap-2">
+              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-xs font-semibold uppercase text-white">
+                {userEmail.charAt(0)}
+              </div>
+              <span className="hidden text-sm text-gray-700 md:inline">{userEmail}</span>
+            </div>
           )}
           <Button variant="ghost" onClick={handleLogout}>
             <LogOut className="h-4 w-4 mr-2" />
