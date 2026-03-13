@@ -176,19 +176,33 @@ export function BusinessDashboard() {
             {servicesLoading ? (
               <p>Loading services...</p>
             ) : servicesData?.services?.length > 0 ? (
-              <div className="space-y-4">
-                {servicesData.services.map((service: any) => (
-                  <div
-                    key={service.id}
-                    className="p-4 border rounded-lg hover:bg-gray-50"
-                  >
-                    <h3 className="font-semibold">{service.name}</h3>
-                    <p className="text-sm text-gray-600">
-                      {service.duration} min • ${service.price}
-                    </p>
+              <>
+                <div className="space-y-4">
+                  {servicesData.services.slice(0, 5).map((service: any) => (
+                    <div
+                      key={service.id}
+                      className="p-4 border rounded-lg hover:bg-gray-50"
+                    >
+                      <h3 className="font-semibold">{service.name}</h3>
+                      <p className="text-sm text-gray-600">
+                        {service.duration} min • ${service.price}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+                {servicesData.services.length > 5 && (
+                  <div className="mt-4">
+                    <Button
+                      variant="outline"
+                      onClick={() => {
+                        window.location.href = '/dashboard/business/services'
+                      }}
+                    >
+                      View all services
+                    </Button>
                   </div>
-                ))}
-              </div>
+                )}
+              </>
             ) : (
               <p className="text-gray-500">No services yet. Create your first service!</p>
             )}
@@ -204,39 +218,53 @@ export function BusinessDashboard() {
             {bookingsLoading ? (
               <p>Loading bookings...</p>
             ) : bookingsData?.bookings?.length > 0 ? (
-              <div className="space-y-4">
-                {bookingsData.bookings.map((booking: any) => (
-                  <div
-                    key={booking.id}
-                    className="p-4 border rounded-lg hover:bg-gray-50"
-                  >
-                    <div className="flex items-start justify-between">
-                      <div>
-                        <h3 className="font-semibold">{booking.service.name}</h3>
-                        <p className="text-sm text-gray-600">{booking.consumer.email}</p>
-                        <div className="flex items-center gap-2 mt-2 text-sm text-gray-500">
-                          <Calendar className="h-4 w-4" />
-                          {format(new Date(booking.slotStart), 'MMM dd, yyyy')}
+              <>
+                <div className="space-y-4">
+                  {bookingsData.bookings.slice(0, 5).map((booking: any) => (
+                    <div
+                      key={booking.id}
+                      className="p-4 border rounded-lg hover:bg-gray-50"
+                    >
+                      <div className="flex items-start justify-between">
+                        <div>
+                          <h3 className="font-semibold">{booking.service.name}</h3>
+                          <p className="text-sm text-gray-600">{booking.consumer.email}</p>
+                          <div className="flex items-center gap-2 mt-2 text-sm text-gray-500">
+                            <Calendar className="h-4 w-4" />
+                            {format(new Date(booking.slotStart), 'MMM dd, yyyy')}
+                          </div>
+                          <div className="flex items-center gap-2 text-sm text-gray-500">
+                            <Clock className="h-4 w-4" />
+                            {format(new Date(booking.slotStart), 'HH:mm')} -{' '}
+                            {format(new Date(booking.slotEnd), 'HH:mm')}
+                          </div>
                         </div>
-                        <div className="flex items-center gap-2 text-sm text-gray-500">
-                          <Clock className="h-4 w-4" />
-                          {format(new Date(booking.slotStart), 'HH:mm')} -{' '}
-                          {format(new Date(booking.slotEnd), 'HH:mm')}
-                        </div>
+                        <span
+                          className={`px-2 py-1 text-xs rounded ${
+                            booking.status === 'CONFIRMED'
+                              ? 'bg-green-100 text-green-800'
+                              : 'bg-gray-100 text-gray-800'
+                          }`}
+                        >
+                          {booking.status}
+                        </span>
                       </div>
-                      <span
-                        className={`px-2 py-1 text-xs rounded ${
-                          booking.status === 'CONFIRMED'
-                            ? 'bg-green-100 text-green-800'
-                            : 'bg-gray-100 text-gray-800'
-                        }`}
-                      >
-                        {booking.status}
-                      </span>
                     </div>
+                  ))}
+                </div>
+                {bookingsData.bookings.length > 5 && (
+                  <div className="mt-4">
+                    <Button
+                      variant="outline"
+                      onClick={() => {
+                        window.location.href = '/dashboard/business/bookings'
+                      }}
+                    >
+                      View all bookings
+                    </Button>
                   </div>
-                ))}
-              </div>
+                )}
+              </>
             ) : (
               <p className="text-gray-500">No bookings yet.</p>
             )}
