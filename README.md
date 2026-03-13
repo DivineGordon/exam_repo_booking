@@ -272,4 +272,4 @@ The API follows RESTful conventions:
 
 ## License
 
-This project is built for a technical assessment.
+This project is built for a technical assessment by G.P. Amamoo.
